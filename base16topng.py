@@ -14,7 +14,11 @@ try:
 except ImportError:
     import Image, ImageDraw  # Older namespace - http://www.pythonware.com/products/pil/
 
-import yaml  # pyyaml
+try:
+    import oyaml as yaml
+except ImportError:
+    import yaml  # pyyaml
+# TODO strictyaml - built in solution to the Norway problem...
 
 
 log = logging.getLogger('base16topng')
@@ -42,7 +46,7 @@ ch.setFormatter(formatter)
 log.addHandler(ch)
 
 def parse_hex(value, hard_fail=True):
-    value = str(value)  # ensure we really have a string - TODO this is a dirty hack, this does seem to work (with Python 3.12.1) for 969896, 000001, 000000
+    #value = str(value)  # ensure we really have a string (variation of the the Norway problem) - TODO this is a dirty hack, this does seem to work (with Python 3.12.1) for 969896, 000001, 000000
     try:
         val = int(value, base=16)
     except TypeError:
@@ -77,7 +81,8 @@ def doit(base16_filename, png_filename=None, image_format='png', page_size=DEFAU
 
     log.info('Opening %s', base16_filename)
     with open(base16_filename, 'r') as f:
-        theme = yaml.safe_load(f)
+        #theme = yaml.safe_load(f)
+        theme = yaml.load(f, Loader=yaml.BaseLoader)  # resolve the Norway problem
     for k, v in theme.items():
         if 'base' not in k:
             log.debug('SKIPPING key %r', k)
