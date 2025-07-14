@@ -13,3 +13,7 @@ From source code checkout:
 Example:
 
     python base16topng.py my_scheme.yaml
+
+## Also See
+
+  * https://github.com/alexmirrington/base16-spectrum-generator
