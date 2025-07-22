@@ -3,6 +3,7 @@
 # vim:ts=4:sw=4:softtabstop=4:smarttab:expandtab
 #
 
+import glob
 import logging
 import os
 import sys
@@ -20,6 +21,7 @@ except ImportError:
     import yaml  # pyyaml
 # TODO strictyaml - built in solution to the Norway problem...
 
+is_win = sys.platform.startswith('win')
 
 log = logging.getLogger('base16topng')
 log.setLevel(logging.INFO)
@@ -124,10 +126,17 @@ def main(argv=None):
 
     log.info('Python %s on %s' % (sys.version.replace('\n', ' '), sys.platform.replace('\n', ' ')))
 
-    scheme_filename = argv[1]
-    doit(scheme_filename)
-    #doit(scheme_filename, sanity_check_size=16)
-    #doit(scheme_filename, sanity_check_size=0)
+    if is_win:
+        filenames = []
+        for filename_pattern in argv[1:]:
+            filenames += glob.glob(filename_pattern)
+    else:
+        filenames = argv[1:]
+
+    for scheme_filename in filenames:
+        doit(scheme_filename)
+        #doit(scheme_filename, sanity_check_size=16)
+        #doit(scheme_filename, sanity_check_size=0)
 
     return 0
 
